@@ -1,13 +1,13 @@
 {
-  "name": "ts-package-template",
+  "name": "@sebalon/scripting",
   "version": "1.0.0",
-  "description": "A template for TypeScript packages",
+  "description": "Useful tools for automating stuff with Node",
   "author": "Seb Aebischer",
   "license": "MIT",
   "main": "dist/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/seb-cr/ts-package-template.git"
+    "url": "git+https://github.com/seb-cr/node-scripting.git"
   },
   "files": [
     "dist"
@@ -27,21 +27,18 @@
   "devDependencies": {
     "@comicrelief/eslint-config": "^2.0.3",
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
-    "@octokit/rest": "^19.0.7",
     "@types/chai": "^4.3.4",
-    "@types/inquirer": "^8.2.6",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.15.13",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
     "chai": "^4.3.7",
-    "chalk": "^4.1.2",
     "eslint": "^8.38.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-jsdoc": "^39.9.1",
-    "inquirer": "^8.2.5",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
+    "semantic-release": "^21.0.2",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.0.4"
