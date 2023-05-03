@@ -1,0 +1,6 @@
+root: true
+
+extends:
+  - '@comicrelief/eslint-config/mixins/base'
+  - '@comicrelief/eslint-config/mixins/ts'
+  - '@comicrelief/eslint-config/mixins/jsdoc'

@@ -1,0 +1,49 @@
+{
+  "name": "ts-package-template",
+  "version": "1.0.0",
+  "description": "A template for TypeScript packages",
+  "author": "Seb Aebischer",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seb-cr/ts-package-template.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepare": "npm run clean && npm run build",
+    "build": "tsc -p tsconfig-build.json",
+    "clean": "rm -rf dist",
+    "lint": "eslint src tests",
+    "mocha": "mocha --require ts-node/register --require tests/setup.ts",
+    "test": "npm run mocha -- 'tests/**/*.spec.ts'",
+    "coverage": "nyc npm test"
+  },
+  "devDependencies": {
+    "@comicrelief/eslint-config": "^2.0.3",
+    "@istanbuljs/nyc-config-typescript": "^1.0.2",
+    "@octokit/rest": "^19.0.7",
+    "@types/chai": "^4.3.4",
+    "@types/inquirer": "^8.2.6",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^18.15.13",
+    "@typescript-eslint/eslint-plugin": "^5.59.0",
+    "@typescript-eslint/parser": "^5.59.0",
+    "chai": "^4.3.7",
+    "chalk": "^4.1.2",
+    "eslint": "^8.38.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jsdoc": "^39.9.1",
+    "inquirer": "^8.2.5",
+    "mocha": "^10.2.0",
+    "nyc": "^15.1.0",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.0.4"
+  }
+}
