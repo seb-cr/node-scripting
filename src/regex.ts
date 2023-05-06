@@ -14,6 +14,17 @@ export function escapeRegex(string: string): string {
 }
 
 /**
+ * Turns a `string | RegExp` into a RegExp.
+ *
+ * @param value
+ */
+export function regex(value: string | RegExp): RegExp {
+  return typeof value === 'string'
+    ? new RegExp(escapeRegex(value))
+    : value;
+}
+
+/**
  * Turns a search value (string or RegExp) into a global RegExp.
  *
  * @param input
