@@ -1,6 +1,6 @@
 # Scripting tools
 
-Useful tools for automating stuff with Node.
+Useful tools for automating stuff with Node, like making small changes to config files or updating a dependency.
 
 ## Usage
 
@@ -38,3 +38,15 @@ If you also need to inspect `stderr`, use `exec` which is the promisified versio
 const output = await exec('echo hello');
 // => { stdout: 'hello\n', stderr: '' }
 ```
+
+### File manipulation
+
+Work with text files using the `withFile` function. It opens the file, passes the content to a callback for editing, then saves it back if any changes were made.
+
+```ts
+await withFile('example.txt', (f) => {
+  // ...
+});
+```
+
+For all available methods see the [`Text`](src/text.ts) class.

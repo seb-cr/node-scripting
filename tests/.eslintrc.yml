@@ -1,2 +1,5 @@
 extends:
   - '@comicrelief/eslint-config/mixins/mocha'
+
+rules:
+  no-param-reassign: off
