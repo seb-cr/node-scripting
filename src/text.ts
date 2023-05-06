@@ -127,4 +127,37 @@ export class Text {
       this.insertLine(lines.join('\n'), where);
     }
   }
+
+  /**
+   * Deletes the first line that matches `line`, or throws if no line matches.
+   *
+   * @param line String or RegExp that identifies the line.
+   */
+  deleteLine(line: string | RegExp) {
+    const lines = this.lines();
+    const pattern = regex(line);
+    const row = lines.findIndex((it) => it.match(pattern));
+    if (row === -1) {
+      throw new Error(`No line found matching ${pattern}`);
+    }
+    lines.splice(row, 1);
+    this.content = lines.join('\n');
+  }
+
+  /**
+   * Deletes every line that matches `line`.
+   *
+   * @param line String or RegExp that identifies the lines.
+   */
+  deleteEveryLine(line: string | RegExp) {
+    const lines = this.lines();
+    const pattern = regex(line);
+    const rows = (lines.map((it, index) => [it, index]) as [string, number][])
+      .filter(([it]) => it.match(pattern))
+      .map(([_, row]) => row);
+    rows.forEach((row, index) => {
+      lines.splice(row - index, 1);
+    });
+    this.content = lines.join('\n');
+  }
 }

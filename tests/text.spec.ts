@@ -172,4 +172,45 @@ describe('Text', () => {
       expect(text.content).to.equal('one\ntwo\nthree');
     });
   });
+
+  describe('deleteLine', () => {
+    it('should delete the first matching line', () => {
+      const text = new Text('one\ntwo\nthree\ntwo\none');
+      text.deleteLine('two');
+      expect(text.content).to.equal('one\nthree\ntwo\none');
+    });
+
+    it('should match part of a line', () => {
+      const text = new Text('the quick\nbrown fox');
+      text.deleteLine('fox');
+      expect(text.content).to.equal('the quick');
+    });
+
+    it('should throw if no line matches', () => {
+      const text = new Text('one');
+      expect(
+        () => text.deleteLine('two'),
+      ).to.throw('No line found matching /two/');
+    });
+  });
+
+  describe('deleteEveryLine', () => {
+    it('should delete all matching lines', () => {
+      const text = new Text('one\ntwo\nthree\ntwo\none');
+      text.deleteEveryLine('two');
+      expect(text.content).to.equal('one\nthree\none');
+    });
+
+    it('should match part of a line', () => {
+      const text = new Text('apple\norange\nbanana');
+      text.deleteEveryLine('an');
+      expect(text.content).to.equal('apple');
+    });
+
+    it('should do nothing if no line matches', () => {
+      const text = new Text('one');
+      text.deleteEveryLine('two');
+      expect(text.content).to.equal('one');
+    });
+  });
 });
