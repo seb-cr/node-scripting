@@ -213,4 +213,45 @@ describe('Text', () => {
       expect(text.content).to.equal('one');
     });
   });
+
+  describe('deleteBlock', () => {
+    it('should delete the first matching block (strings)', () => {
+      const text = new Text('one\ntwo\n\none\nthree\n\none\ntwo');
+      text.deleteBlock(['one', 'two']);
+      expect(text.content).to.equal('\none\nthree\n\none\ntwo');
+    });
+
+    it('should delete the first matching block (regexps)', () => {
+      const text = new Text('one\ntwo\n\none\nthree\n\none\ntwo');
+      text.deleteBlock([/one/, /two/]);
+      expect(text.content).to.equal('\none\nthree\n\none\ntwo');
+    });
+
+    it('should throw if no block matches', () => {
+      const text = new Text('one');
+      expect(
+        () => text.deleteBlock(['one', 'two']),
+      ).to.throw('No block found matching\n\n/one/\n/two/');
+    });
+  });
+
+  describe('deleteEveryBlock', () => {
+    it('should delete all matching blocks (strings)', () => {
+      const text = new Text('one\ntwo\n\none\nthree\n\none\ntwo');
+      text.deleteEveryBlock(['one', 'two']);
+      expect(text.content).to.equal('\none\nthree\n');
+    });
+
+    it('should delete all matching blocks (regexps)', () => {
+      const text = new Text('one\ntwo\n\none\nthree\n\none\ntwo');
+      text.deleteEveryBlock([/one/, /two/]);
+      expect(text.content).to.equal('\none\nthree\n');
+    });
+
+    it('should not consider lines overlapping in blocks that match', () => {
+      const text = new Text('one\none\none\ntwo');
+      text.deleteEveryBlock(['one', 'one']);
+      expect(text.content).to.equal('one\ntwo');
+    });
+  });
 });

@@ -160,4 +160,69 @@ export class Text {
     });
     this.content = lines.join('\n');
   }
+
+  /**
+   * Deletes the first group of lines that match `block`, or throws if no lines
+   * match.
+   *
+   * @param block Strings or RegExps that identify the lines.
+   */
+  deleteBlock(block: (string | RegExp)[]) {
+    if (block.length === 0) {
+      return;
+    }
+
+    const lines = this.lines();
+    const patterns = block.map((it) => regex(it));
+    const maxIndex = lines.length - block.length;
+    const row = lines.findIndex((
+      (_, index) => index <= maxIndex && patterns.every((
+        (pattern, offset) => lines[index + offset].match(pattern)
+      ))
+    ));
+    if (row === -1) {
+      throw new Error(`No block found matching\n\n${patterns.join('\n')}`);
+    }
+    lines.splice(row, block.length);
+    this.content = lines.join('\n');
+  }
+
+  /**
+   * Deletes every group of lines that matches `block`.
+   *
+   * @param block Strings or RegExps that identify the lines.
+   */
+  deleteEveryBlock(block: (string | RegExp)[]) {
+    if (block.length === 0) {
+      return;
+    }
+
+    const lines = this.lines();
+    const patterns = block.map((it) => regex(it));
+    const rows: number[] = [];
+    let matchRow = -1;
+    let matches = 0;
+    lines.forEach((line, index) => {
+      if (line.match(patterns[matches])) {
+        if (matches === 0) {
+          matchRow = index;
+        }
+        matches += 1;
+        if (matches === block.length) {
+          rows.push(matchRow);
+          matches = 0;
+        }
+      } else if (matches > 0) {
+        if (line.match(patterns[0])) {
+          matches = 1;
+        } else {
+          matches = 0;
+        }
+      }
+    });
+    rows.forEach((row, index) => {
+      lines.splice(row - index * block.length, block.length);
+    });
+    this.content = lines.join('\n');
+  }
 }
