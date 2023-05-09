@@ -225,4 +225,36 @@ export class Text {
     });
     this.content = lines.join('\n');
   }
+
+  /**
+   * Appends `text` to the end of the text.
+   *
+   * @param text The text to append.
+   */
+  append(text: string) {
+    this.content += text;
+  }
+
+  /**
+   * Appends a line to the end of the text.
+   *
+   * @param line The text to append.
+   */
+  appendLine(line: string) {
+    if (!this.content.endsWith('\n')) {
+      this.content += '\n';
+    }
+    this.content += `${line}\n`;
+  }
+
+  /**
+   * Appends lines to the end of the text.
+   *
+   * @param lines Array of lines to append.
+   */
+  appendLines(lines: string[]) {
+    if (lines.length > 0) {
+      this.appendLine(lines.join('\n'));
+    }
+  }
 }

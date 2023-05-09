@@ -46,6 +46,7 @@ Work with text files using the `withFile` function. It opens the file, passes th
 ```ts
 await withFile('example.txt', (f) => {
   f.replaceAll('old', 'new');
+  f.appendLine('footer');
   f.insertLine('fizz', { aboveEvery: 'buzz' });
   f.deleteLine('bye');
 });

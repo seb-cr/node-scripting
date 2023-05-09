@@ -254,4 +254,52 @@ describe('Text', () => {
       expect(text.content).to.equal('one\ntwo');
     });
   });
+
+  describe('append', () => {
+    it('should append the text', () => {
+      const text = new Text('one\n');
+      text.append('two');
+      expect(text.content).to.equal('one\ntwo');
+    });
+
+    it('should not start a new line', () => {
+      const text = new Text('one\ntwo');
+      text.append('three');
+      expect(text.content).to.equal('one\ntwothree');
+    });
+  });
+
+  describe('appendLine', () => {
+    it('should append the line with a line ending', () => {
+      const text = new Text('one\n');
+      text.appendLine('two');
+      expect(text.content).to.equal('one\ntwo\n');
+    });
+
+    it('should add a line ending to the previous line if required', () => {
+      const text = new Text('one');
+      text.appendLine('two');
+      expect(text.content).to.equal('one\ntwo\n');
+    });
+
+    it('should not prevent explicitly adding extra linebreaks', () => {
+      const text = new Text('one\n');
+      text.appendLine('\ntwo\n');
+      expect(text.content).to.equal('one\n\ntwo\n\n');
+    });
+  });
+
+  describe('appendLines', () => {
+    it('should append the lines with line endings', () => {
+      const text = new Text('one\n');
+      text.appendLines(['two', 'three']);
+      expect(text.content).to.equal('one\ntwo\nthree\n');
+    });
+
+    it('should add a line ending to the previous line if required', () => {
+      const text = new Text('one');
+      text.appendLines(['two', 'three']);
+      expect(text.content).to.equal('one\ntwo\nthree\n');
+    });
+  });
 });
