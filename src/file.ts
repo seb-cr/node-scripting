@@ -1,7 +1,28 @@
-import { readFile, writeFile } from 'fs/promises';
+import {
+  access,
+  readFile,
+  writeFile,
+} from 'fs/promises';
 import { EOL } from 'os';
 
 import { Text } from './text';
+
+/**
+ * Check whether the given file or directory exists.
+ *
+ * @param path File or directory path.
+ */
+export async function exists(path: string): Promise<boolean> {
+  try {
+    await access(path);
+    return true;
+  } catch (error: any) {
+    if (error.code === 'ENOENT') {
+      return false;
+    }
+    throw error;
+  }
+}
 
 /**
  * Work with a text file.

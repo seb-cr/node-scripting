@@ -41,6 +41,20 @@ const output = await exec('echo hello');
 
 ### File manipulation
 
+Check whether a file exists using `exists`.
+
+```ts
+if (await exists('somefile')) {
+  // do something
+}
+```
+
+Most other file operations (delete, copy, rename) are already easy enough using Node's `fs/promises` API. Documentation for these can be found [here](https://nodejs.org/api/fs.html#promises-api).
+
+```ts
+import { rm, copyFile, rename } from 'fs/promises';
+```
+
 Work with text files using the `withFile` function. It opens the file, passes the content to a callback for editing, then saves it back if any changes were made.
 
 ```ts

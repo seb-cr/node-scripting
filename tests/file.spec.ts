@@ -2,11 +2,25 @@ import { readFile, unlink, writeFile } from 'fs/promises';
 
 import { expect } from 'chai';
 
-import { withFile } from '@/src';
+import { exists, withFile } from '@/src';
 
-const TEST_FILE = 'test.tmp';
+describe('exists', () => {
+  it('should return true if the path is a file', async () => {
+    expect(await exists('README.md')).to.be.true;
+  });
+
+  it('should return true if the path is a directory', async () => {
+    expect(await exists('tests')).to.be.true;
+  });
+
+  it('should return false if the path does not exist', async () => {
+    expect(await exists('nonexistent')).to.be.false;
+  });
+});
 
 describe('withFile', () => {
+  const TEST_FILE = 'test.tmp';
+
   before('create test file', async () => {
     await writeFile(TEST_FILE, 'hello world');
   });
