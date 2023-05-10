@@ -2,7 +2,12 @@ import { readFile, unlink, writeFile } from 'fs/promises';
 
 import { expect } from 'chai';
 
-import { exists, withFile, withYamlFile } from '@/src';
+import {
+  exists,
+  withFile,
+  withJsonFile,
+  withYamlFile,
+} from '@/src';
 
 describe('exists', () => {
   it('should return true if the path is a file', async () => {
@@ -47,6 +52,54 @@ describe('withFile', () => {
 
     const newContent = (await readFile(TEST_FILE)).toString();
     expect(newContent).to.equal('goodbye');
+  });
+});
+
+describe('withJsonFile', () => {
+  const TEST_FILE = 'test.json';
+  const TEST_DATA = { foo: { bar: { baz: 'bing' } } };
+  const EXPECTED_DATA = { foo: { bar: { baz: 'wiggle' } } };
+
+  before('create test file', async () => {
+    await writeFile(TEST_FILE, JSON.stringify(TEST_DATA));
+  });
+
+  after('delete test file', async () => {
+    await unlink(TEST_FILE);
+  });
+
+  it('should pass file content to callback', async () => {
+    let wasCalled = false;
+
+    await withJsonFile(TEST_FILE, (f) => {
+      expect(f).to.deep.equal(TEST_DATA);
+      wasCalled = true;
+    });
+
+    expect(wasCalled, 'callback was not called').to.be.true;
+  });
+
+  it('should write back any changes made', async () => {
+    await withJsonFile(TEST_FILE, (f) => {
+      f.foo.bar.baz = 'wiggle';
+    });
+
+    const newContent = (await readFile(TEST_FILE)).toString();
+    const doc = JSON.parse(newContent);
+    expect(doc).to.deep.equal(EXPECTED_DATA);
+  });
+
+  [0, 2, 4, '\t'].forEach((indentation) => {
+    it(`should preserve indentation (${JSON.stringify(indentation)})`, async () => {
+      await writeFile(TEST_FILE, JSON.stringify(TEST_DATA, null, indentation));
+
+      await withJsonFile(TEST_FILE, (f) => {
+        f.foo.bar.baz = 'wiggle';
+      });
+
+      const newContent = (await readFile(TEST_FILE)).toString();
+      expect(newContent).to.equal(JSON.stringify(EXPECTED_DATA, null, indentation));
+    });
   });
 });
 

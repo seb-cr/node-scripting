@@ -68,7 +68,15 @@ await withFile('example.txt', (f) => {
 
 For all available methods see the [`Text`](src/text.ts) class.
 
-Work with YAML files using the `withYamlFile` function. Like `withText`, it passes the file's content to a callback for editing. In this case the file is parsed into a YAML `Document` using the [`yaml`](https://www.npmjs.com/package/yaml) package.
+Work with JSON files using the `withJsonFile` function. Like `withText`, it passes the file's content to a callback for editing. In this case the text content is parsed as JSON, and the resulting plain object (or primitive, if that's what the JSON represents) is passed to the callback.
+
+```ts
+await withJsonFile('example.json', (f) => {
+  f.foo.bar.baz = 42;
+});
+```
+
+Work with YAML files using the `withYamlFile` function. The file is parsed into a YAML `Document` using the [`yaml`](https://www.npmjs.com/package/yaml) package.
 
 ```ts
 await withYamlFile('example.yaml', (f) => {
@@ -77,3 +85,5 @@ await withYamlFile('example.yaml', (f) => {
 ```
 
 See [the YAML package docs](https://eemeli.org/yaml/#documents) for documentation of `Document`.
+
+Both `withJsonFile` and `withYamlFile` will make some effort to preserve the original indentation of the file (and comments in YAML).

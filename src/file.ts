@@ -56,6 +56,35 @@ export async function withFile(
 }
 
 /**
+ * Work with a JSON file.
+ *
+ * Opens the file, parses its content and passes to `callback`, then
+ * reserialises back to the file.
+ *
+ * An attempt will be made to preserve indentation, based on the first indented line
+ * found. This should be adequate for well-formatted documents.
+ *
+ * @param path File path.
+ * @param callback Function that does something with the JSON document.
+ */
+export async function withJsonFile<T = any>(
+  path: string,
+  callback: (f: T) => void | Promise<void>,
+): Promise<void> {
+  const rawContent = (await readFile(path)).toString();
+  const doc = JSON.parse(rawContent);
+
+  await callback(doc);
+
+  // set indentation based on the first indented line
+  const indent = /^(\s+)/m.exec(rawContent)?.[1] || 0;
+  const newContent = JSON.stringify(doc, null, indent);
+  if (newContent !== rawContent) {
+    await writeFile(path, newContent);
+  }
+}
+
+/**
  * Work with a YAML file.
  *
  * Opens the file, parses its content and passes to `callback`, then
