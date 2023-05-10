@@ -67,3 +67,13 @@ await withFile('example.txt', (f) => {
 ```
 
 For all available methods see the [`Text`](src/text.ts) class.
+
+Work with YAML files using the `withYamlFile` function. Like `withText`, it passes the file's content to a callback for editing. In this case the file is parsed into a YAML `Document` using the [`yaml`](https://www.npmjs.com/package/yaml) package.
+
+```ts
+await withYamlFile('example.yaml', (f) => {
+  f.setIn(['foo', 'bar', 'baz'], 42);
+});
+```
+
+See [the YAML package docs](https://eemeli.org/yaml/#documents) for documentation of `Document`.

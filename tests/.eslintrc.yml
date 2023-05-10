@@ -3,3 +3,4 @@ extends:
 
 rules:
   no-param-reassign: off
+  '@typescript-eslint/ban-ts-comment': off

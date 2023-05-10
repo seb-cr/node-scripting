@@ -2,7 +2,7 @@ import { readFile, unlink, writeFile } from 'fs/promises';
 
 import { expect } from 'chai';
 
-import { exists, withFile } from '@/src';
+import { exists, withFile, withYamlFile } from '@/src';
 
 describe('exists', () => {
   it('should return true if the path is a file', async () => {
@@ -47,5 +47,55 @@ describe('withFile', () => {
 
     const newContent = (await readFile(TEST_FILE)).toString();
     expect(newContent).to.equal('goodbye');
+  });
+});
+
+describe('withYamlFile', () => {
+  const TEST_FILE = 'test.yaml';
+
+  before('create test file', async () => {
+    await writeFile(TEST_FILE, `# test file
+foo:
+  bar:
+    baz: bing
+
+list:
+  - one
+  - two
+`);
+  });
+
+  after('delete test file', async () => {
+    await unlink(TEST_FILE);
+  });
+
+  it('should pass YAML to callback', async () => {
+    let wasCalled = false;
+
+    await withYamlFile(TEST_FILE, (f) => {
+      expect(f.getIn(['foo', 'bar', 'baz'])).to.equal('bing');
+      wasCalled = true;
+    });
+
+    expect(wasCalled, 'callback was not called').to.be.true;
+  });
+
+  it('should write back any changes made', async () => {
+    await withYamlFile(TEST_FILE, (f) => {
+      // @ts-ignore
+      f.contents.items[0].key.commentBefore = ' edited!';
+      f.setIn(['foo', 'bar', 'baz'], 'wiggle');
+      f.deleteIn(['list', 0]);
+    });
+
+    const newContent = (await readFile(TEST_FILE)).toString();
+    expect(newContent).to.equal(`# edited!
+foo:
+  bar:
+    baz: wiggle
+
+list:
+  - two
+`);
   });
 });
