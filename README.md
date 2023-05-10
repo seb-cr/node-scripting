@@ -2,7 +2,7 @@
 
 Useful tools for automating stuff with Node, like making small changes to config files or updating a dependency.
 
-## Usage
+## Installation
 
 Install via npm:
 
@@ -10,38 +10,45 @@ Install via npm:
 npm i @sebalon/scripting
 ```
 
-Then import the functions you need into your scripts.
+## Shell
 
-```ts
-import { /* ... */ } from '@sebalon/scripting';
-```
+Functions for running shell commands.
 
-### Shell
+### `exec(command: string, options?: ExecOptions): PromiseWithChild<{ stdout: string; stderr: string; }>`
 
-Run shell commands using `sh`. It returns a `Promise` for the command's output.
+Promisified version of `child_process.exec`.
 
-```ts
-const output = await sh('echo hello');
-// => 'hello'
-```
+Executes `command` within a shell and return an object containing stdout and stderr, or throws an error if `command` completes with a non-zero exit code.
 
-By default, leading and trailing whitespace is trimmed from the output. You can disable this by passing `trim: false` in the options.
-
-```ts
-const output = await sh('echo hello', { trim: false });
-// => 'hello\n'
-```
-
-If you also need to inspect `stderr`, use `exec` which is the promisified version of [Node's `child_process.exec`](https://nodejs.org/api/child_process.html#child_processexeccommand-options-callback).
+See the official Node documentation [here](https://nodejs.org/api/child_process.html#child_processexeccommand-options-callback) for more details.
 
 ```ts
 const output = await exec('echo hello');
 // => { stdout: 'hello\n', stderr: '' }
 ```
 
-### File manipulation
+### `sh(command: string, options?: ShOptions): Promise<string>`
 
-Check whether a file exists using `exists`.
+Executes `command` within a shell and returns its output (stdout), or throws an error if `command` completes with a non-zero exit code.
+
+By default, leading and trailing whitespace is trimmed from the output. You can disable this by passing `trim: false` in the options.
+
+```ts
+const output = await sh('echo hello');
+// => 'hello'
+const untrimmed = await sh('echo hello', { trim: false });
+// => 'hello\n'
+```
+
+## File
+
+Functions for manipulating files.
+
+The main use-case for these is to make small modifications to files that already exist. Other file operations (delete, copy, rename) are already easy enough using Node's `fs/promises` API. Documentation for these can be found [here](https://nodejs.org/api/fs.html#promises-api).
+
+### `exists(path: string): boolean`
+
+Check whether the given file or directory exists.
 
 ```ts
 if (await exists('somefile')) {
@@ -49,13 +56,13 @@ if (await exists('somefile')) {
 }
 ```
 
-Most other file operations (delete, copy, rename) are already easy enough using Node's `fs/promises` API. Documentation for these can be found [here](https://nodejs.org/api/fs.html#promises-api).
+### `withFile(path: string, callback: (f: Text) => void | Promise<void>): Promise<void>`
 
-```ts
-import { rm, copyFile, rename } from 'fs/promises';
-```
+Work with a text file.
 
-Work with text files using the `withFile` function. It opens the file, passes the content to a callback for editing, then saves it back if any changes were made.
+Opens the file, passes the content to `callback`, then saves it back if any changes were made.
+
+Line endings in the content are normalised to `\n`, and returned to the OS-specific line ending on save (as defined by `os.EOL`).
 
 ```ts
 await withFile('example.txt', (f) => {
@@ -68,7 +75,13 @@ await withFile('example.txt', (f) => {
 
 For all available methods see the [`Text`](src/text.ts) class.
 
-Work with JSON files using the `withJsonFile` function. Like `withText`, it passes the file's content to a callback for editing. In this case the text content is parsed as JSON, and the resulting plain object (or primitive, if that's what the JSON represents) is passed to the callback.
+### `withJsonFile<T = any>(path: string, callback: (f: T) => void | Promise<void>): Promise<void>`
+
+Work with a JSON file.
+
+Opens the file, parses its content and passes to `callback`, then reserialises back to the file.
+
+An attempt will be made to preserve indentation, based on the first indented line found. This should be adequate for well-formatted documents.
 
 ```ts
 await withJsonFile('example.json', (f) => {
@@ -76,14 +89,16 @@ await withJsonFile('example.json', (f) => {
 });
 ```
 
-Work with YAML files using the `withYamlFile` function. The file is parsed into a YAML `Document` using the [`yaml`](https://www.npmjs.com/package/yaml) package.
+### `withYamlFile(path: string, callback: (f: Document) => void | Promise<void>): Promise<void>`
+
+Work with a YAML file.
+
+Opens the file, parses its content and passes to `callback`, then reserialises back to the file.
+
+The `callback` is passed a `Document` instance which allows precise editing of YAML content, including comments and spaces. See [the `yaml` package docs](https://eemeli.org/yaml/#documents) for documentation.
 
 ```ts
 await withYamlFile('example.yaml', (f) => {
   f.setIn(['foo', 'bar', 'baz'], 42);
 });
 ```
-
-See [the YAML package docs](https://eemeli.org/yaml/#documents) for documentation of `Document`.
-
-Both `withJsonFile` and `withYamlFile` will make some effort to preserve the original indentation of the file (and comments in YAML).

@@ -7,15 +7,17 @@ import { promisify } from 'util';
  * Executes `command` within a shell and return an object containing stdout and
  * stderr, or throws an error if `command` completes with a non-zero exit code.
  *
- * See the official Node documentation here for more details:
- * https://nodejs.org/api/child_process.html#child_processexeccommand-options-callback
+ * See the official Node documentation
+ * [here](https://nodejs.org/api/child_process.html#child_processexeccommand-options-callback)
+ * for more details.
  *
  * ```ts
- * import { exec } from '@sebalon/scripting';
- *
  * const output = await exec('echo hello');
  * // => { stdout: 'hello\n', stderr: '' }
  * ```
+ *
+ * @param command The command to run.
+ * @param [options]
  */
 export const exec = promisify(execWithCallback);
 
@@ -35,14 +37,17 @@ export type ShOptions = ExecOptions & {
  * Executes `command` within a shell and returns its output (stdout), or throws
  * an error if `command` completes with a non-zero exit code.
  *
- * ```ts
- * import { sh } from '@sebalon/scripting';
+ * By default, leading and trailing whitespace is trimmed from the output. You
+ * can disable this by passing `trim: false` in the options.
  *
+ * ```ts
  * const output = await sh('echo hello');
  * // => 'hello'
+ * const untrimmed = await sh('echo hello', { trim: false });
+ * // => 'hello\n'
  * ```
  *
- * @param command Command to run.
+ * @param command The command to run.
  * @param options Options to be passed to `exec`.
  */
 export async function sh(command: string, options?: ShOptions): Promise<string> {

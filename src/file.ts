@@ -12,6 +12,12 @@ import { Text } from './text';
 /**
  * Check whether the given file or directory exists.
  *
+ * ```ts
+ * if (await exists('somefile')) {
+ *   // do something
+ * }
+ * ```
+ *
  * @param path File or directory path.
  */
 export async function exists(path: string): Promise<boolean> {
@@ -35,8 +41,19 @@ export async function exists(path: string): Promise<boolean> {
  * Line endings in the content are normalised to `\n`, and returned to the
  * OS-specific line ending on save (as defined by `os.EOL`).
  *
- * @param path File path.
- * @param callback Function that does something with the file content.
+ * ```ts
+ * await withFile('example.txt', (f) => {
+ *   f.replaceAll('old', 'new');
+ *   f.appendLine('footer');
+ *   f.insertLine('fizz', { aboveEvery: 'buzz' });
+ *   f.deleteLine('bye');
+ * });
+ * ```
+ *
+ * For all available methods see the [`Text`](./text.ts) class.
+ *
+ * @param path The file path.
+ * @param callback A function that does something with the file content.
  */
 export async function withFile(
   path: string,
@@ -64,8 +81,14 @@ export async function withFile(
  * An attempt will be made to preserve indentation, based on the first indented line
  * found. This should be adequate for well-formatted documents.
  *
- * @param path File path.
- * @param callback Function that does something with the JSON document.
+ * ```ts
+ * await withJsonFile('example.json', (f) => {
+ *   f.foo.bar.baz = 42;
+ * });
+ * ```
+ *
+ * @param path The file path.
+ * @param callback A function that does something with the JSON document.
  */
 export async function withJsonFile<T = any>(
   path: string,
@@ -95,8 +118,14 @@ export async function withJsonFile<T = any>(
  * [the `yaml` package docs](https://eemeli.org/yaml/#documents) for
  * documentation.
  *
- * @param path File path.
- * @param callback Function that does something with the YAML document.
+ * ```ts
+ * await withYamlFile('example.yaml', (f) => {
+ *   f.setIn(['foo', 'bar', 'baz'], 42);
+ * });
+ * ```
+ *
+ * @param path The file path.
+ * @param callback A function that does something with the YAML document.
  */
 export async function withYamlFile(
   path: string,
