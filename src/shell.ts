@@ -79,6 +79,13 @@ export interface MockShCommandController {
    * @param [mock.stderr] The mock stderr output.
    */
   returns(mock: { exitCode?: number, stdout?: string, stderr?: string }): MockShCommandController;
+
+  /**
+   * Ends this chain and starts a new command matcher.
+   *
+   * @param command The command to match.
+   */
+  command(command: string | RegExp): MockShCommandController;
 }
 
 export interface MockShController {
@@ -201,7 +208,12 @@ sh.mock = () => {
           mocks.push({ exitCode, stdout, stderr });
           return cmdController;
         },
+
+        command(newCommand: string | RegExp) {
+          return mockController.command(newCommand);
+        },
       };
+
       return cmdController;
     },
 

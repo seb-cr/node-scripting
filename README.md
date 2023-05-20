@@ -115,13 +115,15 @@ When you're done, use `sh.restore()` to stop mocking.
 // activate mock mode
 const mock = sh.mock();
 
-// add some default mocks
-mock.returns({ stdout: 'first call' });
-mock.returns({ stdout: 'second call' });
+// add some default mocks (you can chain these methods)
+mock
+  .returns({ stdout: 'first call' })
+  .returns({ stdout: 'second call' });
 
 // add some command-specific mocks
-mock.command('cat file.txt').returns({ stdout: 'file contents' });
-mock.command(/echo/).returns({ stdout: 'mock echo' });
+mock
+  .command('cat file.txt').returns({ stdout: 'file contents' })
+  .command(/echo/).returns({ stdout: 'mock echo' });
 
 await sh('some arbitrary command');
 // => 'first call'

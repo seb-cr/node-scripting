@@ -44,20 +44,22 @@ describe('sh mock mode', () => {
     it('should work as demonstrated', async () => {
       const mock = sh.mock();
 
-      mock.returns({ stdout: 'First call' });
-      mock.returns({ stdout: 'Second call' });
+      mock
+        .returns({ stdout: 'first call' })
+        .returns({ stdout: 'second call' });
 
-      mock.command('cat file.txt').returns({ stdout: 'file contents' });
-      mock.command(/echo/).returns({ stdout: 'mock echo!' });
+      mock
+        .command('cat file.txt').returns({ stdout: 'file contents' })
+        .command(/echo/).returns({ stdout: 'mock echo' });
 
       let result = await sh('some arbitrary command');
-      expect(result).to.equal('First call');
+      expect(result).to.equal('first call');
 
       result = await sh('some arbitrary command');
-      expect(result).to.equal('Second call');
+      expect(result).to.equal('second call');
 
       result = await sh('echo "hi there"');
-      expect(result).to.equal('mock echo!');
+      expect(result).to.equal('mock echo');
 
       result = await sh('cat file.txt');
       expect(result).to.equal('file contents');
@@ -98,11 +100,11 @@ describe('sh mock mode', () => {
 
   describe('matching mocks', () => {
     it('should return the mock results for the matching command', async () => {
-      const mock = sh.mock();
-      mock.command('a')
+      sh.mock()
+        .command('a')
         .returns({ stdout: 'first a' })
-        .returns({ stdout: 'second a' });
-      mock.command('b')
+        .returns({ stdout: 'second a' })
+        .command('b')
         .returns({ stdout: 'first b' })
         .returns({ stdout: 'second b' });
 
