@@ -5,6 +5,7 @@ import {
 } from 'fs/promises';
 import { EOL } from 'os';
 
+import { Glob } from 'glob';
 import YAML from 'yaml';
 
 import { Text } from './text';
@@ -139,5 +140,72 @@ export async function withYamlFile(
   const newContent = doc.toString();
   if (newContent !== rawContent) {
     await writeFile(path, newContent);
+  }
+}
+
+export type WithFilesOptions = {
+  /**
+   * One or more glob patterns of files to include.
+   *
+   * If omitted, all files in the current directory are included, unless
+   * excluded by `exclude`.
+   */
+  include?: string | string[];
+
+  /**
+   * One or more glob patterns of files to exclude.
+   *
+   * Default: ['node_modules']
+   */
+  exclude?: string | string[];
+
+  /**
+   * Include only files that contain this.
+   */
+  containing?: string | RegExp;
+};
+
+/**
+ * Work on text files that match the given search criteria.
+ *
+ * ```ts
+ * // replace every occurrance of 'foo' with 'bar' in every JS file
+ * withFiles({
+ *   include: '**.js',
+ *   containing: 'foo',
+ * }, (f) => {
+ *   f.replaceAll('foo', 'bar');
+ * })
+ * ```
+ *
+ * @param search Specifies which files to process.
+ * @param callback A function that does something with each file's content.
+ */
+export async function withFiles(
+  search: WithFilesOptions,
+  callback: (f: Text) => void | Promise<void>,
+): Promise<void> {
+  const {
+    include = '**',
+    exclude,
+    containing,
+  } = search;
+
+  for await (const path of new Glob(include, { ignore: exclude, nodir: true })) {
+    const rawContent = (await readFile(path)).toString();
+    const originalContent = rawContent
+      .replace(/\r\n/g, '\r')
+      .replace(/\r/g, '\n');
+
+    const f = new Text(originalContent);
+    if (containing && !f.contains(containing)) {
+      continue;
+    }
+
+    await callback(f);
+
+    if (f.content !== originalContent) {
+      await writeFile(path, f.content.replace(/\n/g, EOL));
+    }
   }
 }

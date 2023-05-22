@@ -5,6 +5,7 @@ import { expect } from 'chai';
 import {
   exists,
   withFile,
+  withFiles,
   withJsonFile,
   withYamlFile,
 } from '@/src';
@@ -150,5 +151,140 @@ foo:
 list:
   - two
 `);
+  });
+});
+
+describe('withFiles', () => {
+  const oldDir = process.cwd();
+
+  before('move to test directory', () => {
+    process.chdir('tests/fixtures/withFiles');
+  });
+
+  after('restore working directory', () => {
+    process.chdir(oldDir);
+  });
+
+  describe('no options', () => {
+    it('should process all files in the working directory', async () => {
+      const files = new Set<string>();
+
+      await withFiles({}, (f) => {
+        files.add(f.content.trim());
+      });
+
+      expect(files).to.have.keys([
+        'one',
+        'two',
+        'three',
+        'four',
+        'five',
+        'six',
+      ]);
+    });
+  });
+
+  describe('search.include', () => {
+    it('should restrict to files matching a glob', async () => {
+      const files = new Set<string>();
+
+      await withFiles({ include: 'a/*' }, (f) => {
+        files.add(f.content.trim());
+      });
+
+      expect(files).to.have.keys([
+        'three',
+        'four',
+      ]);
+    });
+
+    it('should accept an array of globs', async () => {
+      const files = new Set<string>();
+
+      await withFiles({ include: ['a/*', 'b/*'] }, (f) => {
+        files.add(f.content.trim());
+      });
+
+      expect(files).to.have.keys([
+        'three',
+        'four',
+        'five',
+        'six',
+      ]);
+    });
+  });
+
+  describe('search.exclude', () => {
+    it('should not process files matching a glob', async () => {
+      const files = new Set<string>();
+
+      await withFiles({ exclude: 'a/*' }, (f) => {
+        files.add(f.content.trim());
+      });
+
+      expect(files).to.have.keys([
+        'one',
+        'two',
+        'five',
+        'six',
+      ]);
+    });
+
+    it('should accept an array of globs', async () => {
+      const files = new Set<string>();
+
+      await withFiles({ exclude: ['a/*', 'b/*'] }, (f) => {
+        files.add(f.content.trim());
+      });
+
+      expect(files).to.have.keys([
+        'one',
+        'two',
+      ]);
+    });
+
+    it('should override included files', async () => {
+      const files = new Set<string>();
+
+      await withFiles({ include: 'a/*', exclude: '**/3' }, (f) => {
+        files.add(f.content.trim());
+      });
+
+      expect(files).to.have.keys([
+        'four',
+      ]);
+    });
+  });
+
+  describe('search.containing', () => {
+    it('should restrict to files containing a string', async () => {
+      const files = new Set<string>();
+
+      await withFiles({ containing: 'e' }, (f) => {
+        files.add(f.content.trim());
+      });
+
+      expect(files).to.have.keys([
+        'one',
+        'three',
+        'five',
+      ]);
+    });
+
+    it('should work with `include` and `exclude`', async () => {
+      const files = new Set<string>();
+
+      await withFiles({
+        include: ['a/*', 'b/*'],
+        exclude: '**/3',
+        containing: 'e',
+      }, (f) => {
+        files.add(f.content.trim());
+      });
+
+      expect(files).to.have.keys([
+        'five',
+      ]);
+    });
   });
 });

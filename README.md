@@ -103,6 +103,20 @@ await withYamlFile('example.yaml', (f) => {
 });
 ```
 
+### `withFiles(search: WithFilesOptions, callback: (f: Text) => void | Promise<void>): Promise<void>`
+
+Work on text files that match the given search criteria.
+
+```ts
+// replace every occurrance of 'foo' with 'bar' in every JS file
+await withFiles({
+  include: '**.js',
+  containing: 'foo',
+}, (f) => {
+  f.replaceAll('foo', 'bar');
+});
+```
+
 ## Test helpers
 
 ### `sh.mock()`
