@@ -103,6 +103,19 @@ describe('sh mock mode', () => {
       const result = await sh('blah');
       expect(result).to.equal('');
     });
+
+    it('should make `sh` error if mock exit code is nonzero', async () => {
+      sh.mock()
+        .returns({
+          exitCode: 1,
+          stdout: 'here is some output',
+          stderr: 'something went wrong',
+        });
+
+      await expect(sh('fail')).to.eventually.be.rejectedWith(
+        'Command failed: fail\nsomething went wrong',
+      );
+    });
   });
 
   describe('matching mocks', () => {
@@ -142,6 +155,20 @@ describe('sh mock mode', () => {
 
       const result = await sh('a');
       expect(result).to.equal('');
+    });
+
+    it('should make `sh` error if mock exit code is nonzero', async () => {
+      sh.mock()
+        .command('fail')
+        .returns({
+          exitCode: 1,
+          stdout: 'here is some output',
+          stderr: 'something went wrong',
+        });
+
+      await expect(sh('fail')).to.eventually.be.rejectedWith(
+        'Command failed: fail\nsomething went wrong',
+      );
     });
   });
 
