@@ -73,12 +73,12 @@ export interface MockShCommandController {
   /**
    * Adds a new command-specific mock result.
    *
-   * @param mock The mock result.
-   * @param [mock.exitCode] The mock process exit code.
-   * @param [mock.stdout] The mock stdout output.
-   * @param [mock.stderr] The mock stderr output.
+   * @param [mock] The mock result.
+   * @param [mock.exitCode] The mock process exit code. Default: 0
+   * @param [mock.stdout] The mock stdout output. Default: none
+   * @param [mock.stderr] The mock stderr output. Default: none
    */
-  returns(mock: { exitCode?: number, stdout?: string, stderr?: string }): MockShCommandController;
+  returns(mock?: { exitCode?: number, stdout?: string, stderr?: string }): MockShCommandController;
 
   /**
    * Ends this chain and starts a new command matcher.
@@ -92,12 +92,12 @@ export interface MockShController {
   /**
    * Adds a new default mock result.
    *
-   * @param mock The mock result.
-   * @param [mock.exitCode] The mock process exit code.
-   * @param [mock.stdout] The mock stdout output.
-   * @param [mock.stderr] The mock stderr output.
+   * @param [mock] The mock result.
+   * @param [mock.exitCode] The mock process exit code. Default: 0
+   * @param [mock.stdout] The mock stdout output. Default: none
+   * @param [mock.stderr] The mock stderr output. Default: none
    */
-  returns(mock: { exitCode?: number, stdout?: string, stderr?: string }): MockShController;
+  returns(mock?: { exitCode?: number, stdout?: string, stderr?: string }): MockShController;
 
   /**
    * Adds a command matcher.
@@ -181,12 +181,12 @@ sh.mock = () => {
   };
 
   const mockController: MockShController = {
-    returns(mock: { exitCode?: number, stdout?: string, stderr?: string }) {
+    returns(mock?: { exitCode?: number, stdout?: string, stderr?: string }) {
       const {
         exitCode = 0,
         stdout = '',
         stderr = '',
-      } = mock;
+      } = mock ?? {};
       defaults.push({ exitCode, stdout, stderr });
       return mockController;
     },
@@ -199,12 +199,12 @@ sh.mock = () => {
       matchers.push([re, mocks]);
 
       const cmdController: MockShCommandController = {
-        returns(mock: { exitCode?: number, stdout?: string, stderr?: string }) {
+        returns(mock?: { exitCode?: number, stdout?: string, stderr?: string }) {
           const {
             exitCode = 0,
             stdout = '',
             stderr = '',
-          } = mock;
+          } = mock ?? {};
           mocks.push({ exitCode, stdout, stderr });
           return cmdController;
         },

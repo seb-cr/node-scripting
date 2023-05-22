@@ -96,6 +96,13 @@ describe('sh mock mode', () => {
         'No mock found for command: blah',
       );
     });
+
+    it('should give no output if mock is omitted', async () => {
+      sh.mock().returns();
+
+      const result = await sh('blah');
+      expect(result).to.equal('');
+    });
   });
 
   describe('matching mocks', () => {
@@ -128,6 +135,13 @@ describe('sh mock mode', () => {
 
       const result = await sh('blah');
       expect(result).to.equal('default');
+    });
+
+    it('should give no output if mock is omitted', async () => {
+      sh.mock().command('a').returns();
+
+      const result = await sh('a');
+      expect(result).to.equal('');
     });
   });
 
