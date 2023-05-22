@@ -1,7 +1,7 @@
 import { ExecOptions, exec as execWithCallback } from 'child_process';
 import { promisify } from 'util';
 
-import { escapeRegex } from './regex';
+import { anchoredRegex } from './regex';
 
 /**
  * Promisified version of `child_process.exec`.
@@ -192,11 +192,8 @@ sh.mock = () => {
     },
 
     command(command: string | RegExp) {
-      const re = typeof command === 'string'
-        ? new RegExp(`^${escapeRegex(command)}$`)
-        : command;
       const mocks: Mock[] = [];
-      matchers.push([re, mocks]);
+      matchers.push([anchoredRegex(command), mocks]);
 
       const cmdController: MockShCommandController = {
         returns(mock?: { exitCode?: number, stdout?: string, stderr?: string }) {
