@@ -23,6 +23,32 @@ describe('Text', () => {
     });
   });
 
+  describe('contains', () => {
+    context('with a string', () => {
+      it('should return true if text contains the string', () => {
+        const text = new Text('one\ntwo\nthree');
+        expect(text.contains('two')).to.be.true;
+      });
+
+      it('should return false if text contains the string', () => {
+        const text = new Text('one\ntwo\nthree');
+        expect(text.contains('blah')).to.be.false;
+      });
+    });
+
+    context('with a regex', () => {
+      it('should return true if text matches the regex', () => {
+        const text = new Text('one\ntwo\nthree');
+        expect(text.contains(/two/)).to.be.true;
+      });
+
+      it('should return false if text matches the regex', () => {
+        const text = new Text('one\ntwo\nthree');
+        expect(text.contains(/blah/)).to.be.false;
+      });
+    });
+  });
+
   describe('replaceAll', () => {
     it('should work with a string', () => {
       const text = new Text('one. two. three');

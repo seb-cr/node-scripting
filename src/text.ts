@@ -54,6 +54,17 @@ export class Text {
   }
 
   /**
+   * Returns `true` if the text contains `value`.
+   *
+   * @param value The string or RegExp to search for.
+   */
+  contains(value: string | RegExp): boolean {
+    return typeof value === 'string'
+      ? this.content.includes(value)
+      : value.exec(this.content) !== null;
+  }
+
+  /**
    * Replace every occurrance of `searchValue` with `replaceValue`.
    *
    * @param searchValue
