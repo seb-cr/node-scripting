@@ -21,7 +21,15 @@ describe('sh', () => {
   });
 
   it('should throw if the command fails', async () => {
-    await expect(sh('false')).to.eventually.be.rejected;
+    const promise = sh('echo "output" && echo "errors" >&2 && false');
+    await expect(promise).to.eventually.be.rejectedWith(
+      'Command failed: echo "output" && echo "errors" >&2 && false\nerrors',
+    ).and.to.include({
+      cmd: 'echo "output" && echo "errors" >&2 && false',
+      code: 1,
+      stdout: 'output\n',
+      stderr: 'errors\n',
+    });
   });
 
   describe('options.trim', () => {
@@ -114,7 +122,12 @@ describe('sh mock mode', () => {
 
       await expect(sh('fail')).to.eventually.be.rejectedWith(
         'Command failed: fail\nsomething went wrong',
-      );
+      ).and.to.include({
+        cmd: 'fail',
+        code: 1,
+        stdout: 'here is some output',
+        stderr: 'something went wrong',
+      });
     });
   });
 
@@ -168,7 +181,12 @@ describe('sh mock mode', () => {
 
       await expect(sh('fail')).to.eventually.be.rejectedWith(
         'Command failed: fail\nsomething went wrong',
-      );
+      ).and.to.include({
+        cmd: 'fail',
+        code: 1,
+        stdout: 'here is some output',
+        stderr: 'something went wrong',
+      });
     });
   });
 

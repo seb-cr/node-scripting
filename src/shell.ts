@@ -175,7 +175,17 @@ sh.mock = () => {
       throw new Error(`No mock found for command: ${command}`);
     }
     if (mock.exitCode !== 0) {
-      throw new Error(`Command failed: ${command}\n${mock.stderr}`);
+      const error = new Error(`Command failed: ${command}\n${mock.stderr}`);
+      Object.assign(error, {
+        cmd: command,
+        code: mock.exitCode,
+        stdout: mock.stdout,
+        stderr: mock.stderr,
+        // not mocked but included for completeness
+        killed: false,
+        signal: null,
+      });
+      throw error;
     }
     return { stdout: mock.stdout, stderr: mock.stderr };
   };
