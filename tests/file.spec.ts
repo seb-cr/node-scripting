@@ -102,6 +102,17 @@ describe('withJsonFile', () => {
       expect(newContent).to.equal(JSON.stringify(EXPECTED_DATA, null, indentation));
     });
   });
+
+  it('should preserve final line ending', async () => {
+    await writeFile(TEST_FILE, '{}\n');
+
+    await withJsonFile(TEST_FILE, (f) => {
+      f.key = 'value';
+    });
+
+    const newContent = (await readFile(TEST_FILE)).toString();
+    expect(newContent).to.equal('{"key":"value"}\n');
+  });
 });
 
 describe('withYamlFile', () => {

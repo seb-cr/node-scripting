@@ -102,7 +102,10 @@ export async function withJsonFile<T = any>(
 
   // set indentation based on the first indented line
   const indent = /^(\s+)/m.exec(rawContent)?.[1] || 0;
-  const newContent = JSON.stringify(doc, null, indent);
+  // preserve final line ending if present
+  const ending = rawContent.endsWith('\n') ? '\n' : '';
+
+  const newContent = JSON.stringify(doc, null, indent) + ending;
   if (newContent !== rawContent) {
     await writeFile(path, newContent);
   }
