@@ -225,6 +225,7 @@ export class Text {
         }
       } else if (matches > 0) {
         if (line.match(patterns[0])) {
+          matchRow = index;
           matches = 1;
         } else {
           matches = 0;

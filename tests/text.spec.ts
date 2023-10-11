@@ -279,6 +279,12 @@ describe('Text', () => {
       text.deleteEveryBlock(['one', 'one']);
       expect(text.content).to.equal('one\ntwo');
     });
+
+    it('should correctly handle repeated first line of block (issue #1)', () => {
+      const text = new Text('one\ntwo\nthree\n');
+      text.deleteEveryBlock(['', 'three']);
+      expect(text.content).to.equal('one\n');
+    });
   });
 
   describe('append', () => {
