@@ -49,7 +49,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "glob": "^10.2.5",
-    "yaml": "^2.2.2"
+    "glob": "^10.3.10",
+    "yaml": "^2.3.2"
   }
 }
