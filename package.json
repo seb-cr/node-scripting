@@ -43,7 +43,7 @@
     "eslint-plugin-jsdoc": "^39.9.1",
     "mocha": "^10.3.0",
     "nyc": "^15.1.0",
-    "semantic-release": "^22.0.12",
+    "semantic-release": "^23.0.6",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.3.3"
